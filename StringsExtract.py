@@ -1,6 +1,7 @@
 import os
 import re
 import json
+pattern = "\"(?:\\\.|[^\"\\\])*\""
 
 def find(dir):
 	for dirfile in os.listdir(dir):
@@ -8,14 +9,20 @@ def find(dir):
 		if (os.path.isfile(path) and not (path.endswith("strings.json"))):
 			print("Searching "+path)
 			with (open(path, mode="r", encoding="utf-8") as f):
-				contents = f.read()
-				search = re.search("\"(?:\\\.|[^\"\\\])*\"",contents)
-				if (search):
-					string = search.group().replace("\"","").replace("'''","")
-					position = search.span()
-					print(f"Found {string} in {path} at {position}")
-					strings[path.replace(directory,"").lstrip("\\")+":"+str(position)] = string
-				else:
+				lines = f.readlines()
+				linen = 0
+				for line in lines:
+					searchs = re.finditer(pattern,line)
+					found = False
+					num = 0
+					for search in searchs:
+						found = True
+						string = search.group().replace("\"","")
+						print(f"Found {string} in {path} at line {linen}, num {num}")
+						strings[path.replace(directory,"").lstrip("\\")+":"+str(linen)+":"+str(num)] = string
+						num += 1
+					linen += 1
+				if (found):
 					print(f"No string was found in {path}")
 		elif (os.path.isdir(path)):
 			find(path)
@@ -33,15 +40,32 @@ def inputt(jsonf):
 def write(dir):
 	dir+="/"
 	for file in strings.keys():
-		path = file.split(":")[0].replace("\\","/")
-		position = file.split(":")[1].replace("(","").replace(")","").split(", ")
-		print("Writing "+strings[file]+" into "+path+" at "+str(position))
-		with (open(dir+path, mode="r", encoding="utf-8") as f):
-			cont = f.read()
+		key = file.split(":")
+		path = key[0].replace("\\","/")
+		linen = int(key[1])
+		num = int(key[2])
+		print("Writing "+strings[file]+" into "+path+" at line "+str(linen)+", num "+str(num))
 		if (not os.path.exists(os.path.dirname(dir+"Repacked/"+path))):
 			os.makedirs(os.path.dirname(dir+"Repacked/"+path))
-		with (open(dir+"Repacked/"+path, mode="w", encoding="utf-8") as f):
-			f.write(cont[:int(position[0])] + "\"" + strings[file] + "\"" + cont[int(position[1]):])
+		cont = None
+		m = "r+"
+		if (not os.path.exists(dir+"Repacked/"+path)):
+			m = "w+"
+			with (open(dir+path, mode="r", encoding="utf-8") as f):
+				cont = f.readlines()
+		with (open(dir+"Repacked/"+path, mode=m, encoding="utf-8") as ff):
+			if (cont == None):
+				lines = ff.readlines()
+			else:
+				ff.writelines(cont)
+				lines = cont
+			ff.seek(0)
+			line = lines[linen]
+			searchs = re.findall(pattern,line)
+			if (len(searchs) != 0):
+				line.replace(searchs[num],strings[file],1)
+			else:
+				print(f"No string was found in {path}")
 
 strings = {}
 directory = input("Directory: ").replace("\\","/")
