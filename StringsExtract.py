@@ -17,7 +17,6 @@ def find(dir):
 					strings[path.replace(directory,"").lstrip("\\")+":"+str(position)] = string
 				else:
 					print(f"No string was found in {path}")
-				
 		elif (os.path.isdir(path)):
 			find(path)
 
