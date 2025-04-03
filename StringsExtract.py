@@ -8,7 +8,7 @@ def find(dir):
 		if (os.path.isfile(path) and not (path.endswith("strings.json"))):
 			print("Searching "+path)
 			with (open(path, mode="r", encoding="utf-8") as f):
-				contents = f.read()	
+				contents = f.read()
 				search = re.search("\"(?:\\\.|[^\"\\\])*\"",contents)
 				if (search):
 					string = search.group().replace("\"","").replace("'''","")
