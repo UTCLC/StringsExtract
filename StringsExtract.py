@@ -48,8 +48,7 @@ def write(dir):
 		linen = int(key[1])
 		num = int(key[2])
 		print("Writing "+strings[file]+" into "+path+" at line "+str(linen)+", num "+str(num))
-		if (not os.path.exists(os.path.dirname(dir+"Repacked/"+path))):
-			os.makedirs(os.path.dirname(dir+"Repacked/"+path))
+		os.makedirs(os.path.dirname(dir+"Repacked/"+path),exist_ok=True)
 		cont = None
 		m = "r+"
 		if (not os.path.exists(dir+"Repacked/"+path)):
