@@ -18,7 +18,7 @@ def find(dir):
 						num = 0
 						for search in searchs:
 							found = True
-							string = search.group().replace("\"","")
+							string = search.group()[1:][:-1]
 							print(f"Found {string} in {path} at line {linen}, num {num}")
 							strings[path.replace(directory,"").lstrip("\\")+":"+str(linen)+":"+str(num)] = string
 							num += 1
