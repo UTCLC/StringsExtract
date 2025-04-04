@@ -1,7 +1,7 @@
 import os
 import re
 import json
-pattern = "\"(?:\\\.|[^\"\\\])*\""
+pattern = re.compile("\"(?:\\\.|[^\"\\\])*\"")
 
 def find(dir):
 	for dirfile in os.listdir(dir):
@@ -13,7 +13,7 @@ def find(dir):
 					lines = f.readlines()
 					linen = 0
 					for line in lines:
-						searchs = re.finditer(pattern,line)
+						searchs = pattern.finditer(line)
 						found = False
 						num = 0
 						for search in searchs:
@@ -67,7 +67,7 @@ def write(dir):
 					lines = cont
 				ff.seek(0)
 				line = lines[linen]
-				searchs = re.findall(pattern,line)
+				searchs = pattern.findall(line)
 				if (len(searchs) != 0):
 					line.replace(searchs[num],"\""+strings[file]+"\"",1)
 					lines[linen] = line
