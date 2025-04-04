@@ -37,7 +37,6 @@ def output(dir):
 def inputt(jsonf):
 	global strings
 	with open(jsonf+"/strings.json", mode="r", encoding="utf-8") as f:
-		print(jsonf+"/strings.json")
 		strings = json.loads(f.read())
 
 def write(dir):
