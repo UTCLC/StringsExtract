@@ -74,7 +74,7 @@ def write(dir):
 					lines[linen] = line
 				else:
 					print(f"No string was found in {path}")
-				ff.write(lines)
+				ff.writelines(lines)
 		except:
 			print("Error encountered when loading "+dir+"Repacked/"+path)
 
