@@ -41,40 +41,42 @@ def inputt(jsonf):
 
 def write(dir):
 	dir+="/"
+	count = 0
+	paths = {}
 	for file in strings.keys():
-		key = file.split(":")
-		path = key[0].replace("\\","/")
-		linen = int(key[1])
-		num = int(key[2])
-		print("Writing "+strings[file]+" into "+path+" at line "+str(linen)+", num "+str(num))
+		pathi = file.split(":")[0].replace("\\","/")
+		if (pathi in paths.keys()):
+			paths[pathi].append(count)
+		else:
+			paths[pathi] = [count]
+		count += 1
+	for path in paths.keys():
 		os.makedirs(os.path.dirname(dir+"Repacked/"+path),exist_ok=True)
-		cont = None
-		m = "r+"
-		if (not os.path.exists(dir+"Repacked/"+path)):
-			m = "w+"
-			try:
-				with (open(dir+path, mode="r", encoding="utf-8") as f):
-					cont = f.readlines()
-			except:
-				print("Error encountered when loading "+dir+path)
+		lines = []
 		try:
-			with (open(dir+"Repacked/"+path, mode=m, encoding="utf-8") as ff):
-				if (cont == None):
-					lines = ff.readlines()
-				else:
-					ff.writelines(cont)
-					lines = cont
-				ff.seek(0)
+			with (open(dir+path, mode="r", encoding="utf-8") as f):
+				lines = f.readlines()
+		except:
+			print("Error encountered when reading "+dir+path)
+		try:
+			ff = open(dir+"Repacked/"+path, mode="w", encoding="utf-8")
+			for stringslinen in paths[path]:
+				key = list(strings.keys())[stringslinen].split(":")
+				linen = int(key[1])
+				num = int(key[2])
 				line = lines[linen]
+				#print("Writing "+list(strings.values())[stringslinen]+" into "+path+" at line "+str(linen)+", num "+str(num))
 				searchs = pattern.findall(line)
+				print(f"{searchs} was found in line {linen} of {path}")
 				if (len(searchs) != 0):
-					line.replace(searchs[num],"\""+strings[file]+"\"",1)
-					lines[linen] = line
+					print("Replacing "+searchs[num]+" with \""+list(strings.values())[stringslinen]+"\" into "+path+" at line "+str(linen)+", num "+str(num))
+					lines[linen] = line.replace(searchs[num],"\""+list(strings.values())[stringslinen]+"\"",1)
 				else:
 					print(f"No string was found in {path}")
-				ff.writelines(lines)
+			ff.writelines(lines)
+			ff.close()
 		except:
-			print("Error encountered when loading "+dir+"Repacked/"+path)
+			print("Error encountered when writing "+dir+"Repacked/"+path)
 
 strings = {}
 directory = input("Directory: ").replace("\\","/")
