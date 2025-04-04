@@ -70,9 +70,11 @@ def write(dir):
 				line = lines[linen]
 				searchs = re.findall(pattern,line)
 				if (len(searchs) != 0):
-					line.replace(searchs[num],strings[file],1)
+					line.replace(searchs[num],"\""+strings[file]+"\"",1)
+					lines[linen] = line
 				else:
 					print(f"No string was found in {path}")
+				ff.write(lines)
 		except:
 			print("Error encountered when loading "+dir+"Repacked/"+path)
 
