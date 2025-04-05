@@ -32,7 +32,7 @@ def find(dir):
 
 def output(dir):
 	with open(dir+"/strings.json", mode="w", encoding="utf-8") as f:
-		f.write(json.dumps(strings, indent=4, separators=(',', ': ')))
+		f.write(json.dumps(strings, indent=4, separators=(',', ': '), ensure_ascii=False))
 
 def inputt(jsonf):
 	global strings
