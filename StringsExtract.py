@@ -1,7 +1,7 @@
 import os
 import re
 import json
-pattern = re.compile("\"(?:\\\.|[^\"\\\])*\"")
+pattern = re.compile(r'"((?:\\"|\\\\|\\[^"]|[^"\\])*)"')
 
 def find(dir):
 	for dirfile in os.listdir(dir):
